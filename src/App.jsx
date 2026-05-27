@@ -11,7 +11,6 @@ import movieDataList from './movie-data.js';
 function App() {
   const [movies, setMovieData] = useState(movieDataList);
   const [favorites, setFavorites] = useState([]);
-  const [selected, setSelected] = useState(null);
 
   const isInFavorites = (id) => {
     const inFavorites = favorites.find(m => m.id == id);
@@ -19,18 +18,15 @@ function App() {
     else return false;
   }
 
-  const removeFromFavorites = (id) => {
-    const movieRemove = favorites.find(m => m.id == id);
-    const newFavorites = favorites.filter(m => m.id != id);
-    // alert(`Removed ${movieRemove.title} from Favorites List`)
-    setFavorites(newFavorites);
-  }
-
   const addToFavorites = (id) => {
-    // console.log(`adding to favorites: ${id}`);
     const movieAdd = movies.find(m => m.id == id);
     if (favorites.find(m => m.id == id)) return;
     setFavorites([...favorites, movieAdd]);
+  }
+
+  const removeFromFavorites = (id) => {
+    const newFavorites = favorites.filter(m => m.id != id);
+    setFavorites(newFavorites);
   }
 
   return (
