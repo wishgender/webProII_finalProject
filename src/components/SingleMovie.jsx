@@ -29,7 +29,7 @@ const SingleMovie = (props) => {
                 </div>
                 <div className="card-content has-text-centered content-rectangle">
                     <h2 className="title is-5">{props.movie.title}</h2>
-                    <p className="is-size-7">{props.movie.description}</p>
+                    <div className='taglineWrapper'>{props.movie.tagline}</div>
                 </div>
                 <footer className='card-footer'>
                     <button
