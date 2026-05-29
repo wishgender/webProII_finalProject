@@ -10,10 +10,10 @@ const SingleFavorite = (props) => {
 
     return (
         <div className="column is-1">
-            <img src={`https://image.tmdb.org/t/p/w92/${props.movie.poster}`} />
+            <img src={`https://image.tmdb.org/t/p/w92/${props.movie.poster}`}
+                alt={props.movie.title} />
             <div className='has-text-centered'>
                 <button className="crossButton" onClick={handleClick} >
-                    {/* <img src={crossIcon} className="w-5" /> */}
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
                         <path d="M0 0h16v16H0z" fill="none" />
                         <path fill="currentColor"

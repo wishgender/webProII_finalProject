@@ -18,6 +18,13 @@ h2 {
   height: 9rem;
 }
 
+.taglineWrapper {
+  font-size: smaller;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .crossButton {
   color: darkred;
 }

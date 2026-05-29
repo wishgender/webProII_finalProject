@@ -23,14 +23,22 @@ This project is available to be viewed running on a live server [on Vercel](http
       - [Dependencies](#dependencies-1)
       - [Functionality](#functionality)
     - [`FavoriteList.jsx`](#favoritelistjsx)
-    - [`SingleFavorite.jsx`](#singlefavoritejsx)
-    - [`MovieList.jsx`](#movielistjsx)
       - [Dependencies](#dependencies-2)
+      - [State](#state)
       - [Functionality](#functionality-1)
       - [Returns](#returns-1)
+    - [`SingleFavorite.jsx`](#singlefavoritejsx)
+      - [Functionality](#functionality-2)
+      - [Returns](#returns-2)
+    - [`MovieList.jsx`](#movielistjsx)
+      - [Dependencies](#dependencies-3)
+      - [Functionality](#functionality-3)
+      - [Returns](#returns-3)
     - [`SingleMovie.jsx`](#singlemoviejsx)
-    - [`index.css`](#indexcss)
-    - [`index.html`](#indexhtml)
+      - [Dependencies](#dependencies-4)
+      - [State](#state-1)
+      - [Functionality](#functionality-4)
+      - [Returns](#returns-4)
   - [Part 3: Conclusion](#part-3-conclusion)
 
 ## [Part 1: Project Overview](#table-of-contents)
@@ -40,7 +48,7 @@ Here is my project’s file structure. Note that inside of the `src` folder, I h
 
 ![File Structure](./public/projectStructure.png)
 
-### `package.json`
+### [`package.json`](#table-of-contents)
 
 The contents of my [`package.json`](./package.json) are as follows:
 ```
@@ -188,15 +196,107 @@ export default Header;
 ```
 
 #### Dependencies
-[`Header.jsx`](./src/components/Header.jsx) requires importing only `FavoritesList` from [`FavoritesList.jsx`](./src/components/FavoriteList.jsx).
+[`Header.jsx`](./src/components/Header.jsx) requires importing only [`FavoriteList`](#favoritelistjsx) from [`FavoriteList.jsx`](./src/components/FavoriteList.jsx).
 
 #### Functionality
 
-This component is essentially just a wrapper for the `FavoritesList` component, passing the props through to it and returning it wrapped in a `<section>` element. In a bigger project, it might contain other content, such as a topbar or similar.
+This component is essentially just a wrapper for the `FavoriteList` component, passing the props through to it and returning it wrapped in a `<section>` element. In a bigger project, it might contain other content, such as a topbar or similar.
 
 ### [`FavoriteList.jsx`](#table-of-contents)
 
+```
+//= laz r
+//= 05-26-2026 17:10
+//= FavoriteList.jsx
+
+//= Dependencies =//
+import { useEffect, useState } from "react";
+import SingleFavorite from "./SingleFavorite.jsx";
+
+const FavoriteList = (props) => {
+    const [isEmpty, setIsEmpty] = useState(true);
+
+    useEffect(() => {
+        if (props.data.length > 0) {
+            setIsEmpty(false);
+        }
+        else setIsEmpty(true);
+    })
+
+    return (
+        <>
+            {
+                isEmpty ? "" : <h1 className="title is-4">Favorites</h1>
+            }
+            <div className="columns is-multiline">
+                {props.data.map((m, i) => <SingleFavorite movie={m} key={i} update={props.update} />)}
+            </div>
+        </>
+    )
+}
+
+export default FavoriteList;
+```
+
+#### Dependencies
+
+This component requires `useState` and `useEffect` from `react`, as well as my [`SingleFavorite`](#singlefavoritejsx) component from [`SingleFavorite.jsx`](./src/components/SingleFavorite.jsx).
+
+#### State
+
+`FavoriteList` has one state, `isEmpty`, which is used to determine whether or not to display the title of the list (it does not appear when the favorites list is empty). This state is initialized to `true`. 
+
+#### Functionality
+
+I use `useEffect` to check if the favorites list is empty each time this component renders. To do this, I simply check if the length of the data passed as a prop is greater than zero. If it is greater than zero, I set `isEmpty` to `false`; otherwise, I set it to `true`. 
+
+#### Returns
+
+This component returns the title of the list as a heading (if the list is not empty) and, wrapped in a `<div>`, each object in the list mapped to a `<SingleFavorite>` component with the individual movie passed as the prop `movie` and the `removeFromFavorites` function passed as the `update` prop.
+
+
 ### [`SingleFavorite.jsx`](#table-of-contents)
+
+```
+//= laz r
+//= 05-26-2026 17:10
+//= SingleFavorite.jsx
+
+const SingleFavorite = (props) => {
+
+    const handleClick = (e) => {
+        props.update(props.movie.id);
+    }
+
+    return (
+        <div className="column is-1">
+            <img src={`https://image.tmdb.org/t/p/w92/${props.movie.poster}`}
+                alt={props.movie.title} />
+            <div className='has-text-centered'>
+                <button className="crossButton" onClick={handleClick} >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                        <path d="M0 0h16v16H0z" fill="none" />
+                        <path fill="currentColor"
+                            d="M7.293 8L3.146 3.854a.5.5 0 1 1 .708-.708L8 7.293l4.146-4.147a.5.5 0 0 1 .708.708L8.707 8l4.147 4.146a.5.5 0 0 1-.708.708L8 8.707l-4.146 4.147a.5.5 0 0 1-.708-.708z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    )
+}
+
+export default SingleFavorite;
+```
+
+#### Functionality
+
+`SingleFavorite` has no states, only a click handler function that executes the `removeFromFavorites` function passed as prop `update` with the `movie` prop's `id` value as the argument. This click handler is called when the button below the movie poster is clicked.
+
+#### Returns
+
+This component returns a `<div>` containing an `<img>` element whose `src` attribute uses the `poster` value of the `movie` prop to fill in the rest of the poster link. Its `alt` attribute is set to the `title` value of the `movie` prop.
+
+Below the `<img>` is another `<div>` containing the `<button>` that allows for removal from the favorites list. The button's `onClick` attribute is set to the `handleClick` function. For the content of the `<button>`, I chose to use raw SVG code rather than import it from an external file, as this made it easier for me to dynamically change its color with pseudo-classes. The cross icon's SVG code is sourced from OpenSearch UI (Apache 2.0 license) via [iconify.design](https://iconify.design).
 
 ### [`MovieList.jsx`](#table-of-contents)
 
@@ -268,7 +368,7 @@ const SingleMovie = (props) => {
                 </div>
                 <div className="card-content has-text-centered content-rectangle">
                     <h2 className="title is-5">{props.movie.title}</h2>
-                    <p className="is-size-7">{props.movie.description}</p>
+                    <div className='taglineWrapper'>{props.movie.tagline}</div>
                 </div>
                 <footer className='card-footer'>
                     <button
@@ -289,8 +389,42 @@ const SingleMovie = (props) => {
 export default SingleMovie;
 ```
 
-### [`index.css`](#table-of-contents)
+#### Dependencies
 
-### [`index.html`](#table-of-contents)
+The `SingleMovie` component requires `useEffect` and `useState` to be imported from `react`.
+
+#### State
+
+This component has one state: `isAFavorite`, a boolean value initialized to `false`.
+
+#### Functionality
+
+Each time this component renders, it will run `useEffect` to update the value of `isAFavorite` according to the return value of the `isInFavorites` function that is passed as prop `check` (using the `id` value of the `movie` prop as the argument for `check`).
+
+There is also a click handler function here that is used by the heart button below the movie poster to determine whether to add or remove the movie from the favorites list. This checks the value of `isAFavorite` and if it is `true`, it executes `removeFromFavorites` (passed as prop `remove`); otherwise, it executes `addToFavorites` (passed as prop `add`).
+
+#### Returns
+
+This component returns a list item element containing a `<div>` that uses the [Bulma CSS framework](https://bulma.io/)'s "card" component for styling. On top is the movie poster (using the `movie` prop's `poster` value in the URL, similarly to the [`SingleFavorite`](#singlefavoritejsx) component). Below that are the `title` value and the `tagline` value of the `movie` prop, with the title using Bulma's title formatting.
+
+At the bottom of the card is the `<footer>`, which contains the heart `<button>` that adds/removes the movie to/from the favorites list. This icon also uses raw SVG code, allowing me to color the icon red when the movie is in the favorites list and gray when it is not. The heart icon's SVG code is sourced from Material Design Icons (Apache 2.0 license) via [iconify.design](https://iconify.design).
+
+<div style="display:flex; text-align:center">
+<figure><img src="./public/grayHeart.png"><figcaption>Not in favorites list</figcaption></figure>
+<figure><img src="./public/redHeart.png"><figcaption>In favorites list</figcaption></figure>
+</div>
 
 ## [Part 3: Conclusion](#table-of-contents)
+
+Overall, this project was a fun exercise in using React. I feel that I have a stronger understanding of how components work, especially in regards to passing props, after completing it.
+
+<div style="display:flex; text-align:center">
+<figure>
+<img src="./public/emptyFavorites.png">
+<figcaption>Project with nothing in the favorites list</figcaption>
+</figure>
+<figure>
+<img src="./public/nonEmptyFavorites.png">
+<figcaption>Project with items in the favorites list</figcaption>
+</figure>
+</div>
